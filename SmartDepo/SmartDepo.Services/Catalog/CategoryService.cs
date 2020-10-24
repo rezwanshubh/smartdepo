@@ -1,4 +1,7 @@
-﻿using SmartDepo.Services.Abstraction;
+﻿using AutoMapper;
+using SmartDepo.Data;
+using SmartDepo.Entities.Domain;
+using SmartDepo.Services.Abstraction;
 using SmartDepo.Services.DTO;
 using System;
 using System.Collections.Generic;
@@ -9,6 +12,18 @@ namespace SmartDepo.Services.Catalog
 {
     public class CategoryService : ICategoryService
     {
+        protected readonly IRepository<Category> _categoryRepository;
+        private readonly IMapper _mapper;
+
+        public CategoryService(
+            IMapper mapper,
+            IRepository<Category> categoryRepository
+            )
+        {
+            _mapper = mapper;
+            _categoryRepository = categoryRepository;
+        }
+
         public void DeleteCategory(Guid categoryId)
         {
             throw new NotImplementedException();
@@ -19,17 +34,22 @@ namespace SmartDepo.Services.Catalog
             throw new NotImplementedException();
         }
 
-        public Task<CategoryDTO> GetCategoryById(Guid categoryId)
+        public Task<CategoryDTO> GetCategoryById(Guid productId)
         {
             throw new NotImplementedException();
         }
 
-        public Task<CategoryDTO> InsertCategory(CategoryDTO categoryDTO)
+        public async Task<CategoryDTO> InsertCategory(CategoryDTO categoryDTO)
         {
-            throw new NotImplementedException();
+            if (categoryDTO == null)
+                throw new ArgumentNullException(nameof(categoryDTO));
+
+            //insert            
+            await _categoryRepository.Insert(_mapper.Map<CategoryDTO, Category>(categoryDTO));
+            return categoryDTO;
         }
 
-        public Task<CategoryDTO> UpdateCategory(CategoryDTO categoryDTO)
+        public Task<CategoryDTO> UpdateCategory(CategoryDTO product)
         {
             throw new NotImplementedException();
         }

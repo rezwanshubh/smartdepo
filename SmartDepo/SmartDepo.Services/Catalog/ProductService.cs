@@ -1,4 +1,7 @@
-﻿using SmartDepo.Services.Abstraction;
+﻿using AutoMapper;
+using SmartDepo.Data;
+using SmartDepo.Entities.Domain;
+using SmartDepo.Services.Abstraction;
 using SmartDepo.Services.DTO;
 using System;
 using System.Collections.Generic;
@@ -9,29 +12,57 @@ namespace SmartDepo.Services.Catalog
 {
     public class ProductService : IProductService
     {
+        protected readonly IRepository<Product> _productRepository;
+        private readonly IMapper _mapper;
+        public ProductService(
+            IMapper mapper,
+            IRepository<Product> productRepository
+            )
+        {
+            _mapper = mapper;
+            _productRepository = productRepository;
+        }
+
         public void DeleteProduct(Guid productId)
         {
-            throw new NotImplementedException();
+            _productRepository.Delete(productId);
         }
 
-        public Task<IEnumerable<ProductDTO>> GetAll()
+        public async Task<IEnumerable<ProductDTO>> GetAll()
         {
-            throw new NotImplementedException();
+            var productList = _productRepository.GetAll();
+            return _mapper.Map<IEnumerable<Product>, IEnumerable<ProductDTO>>(await productList);
         }
 
-        public Task<ProductDTO> GetProductById(Guid productId)
+        public async Task<ProductDTO> GetProductById(Guid productId)
         {
-            throw new NotImplementedException();
+            if (productId == null)
+                return null;
+
+            Product product = await _productRepository.GetById(productId);
+
+            return _mapper.Map<ProductDTO>(product);
+
         }
 
-        public Task<ProductDTO> InsertProduct(ProductDTO product)
+        public async Task<ProductDTO> InsertProduct(ProductDTO productDTO)
         {
-            throw new NotImplementedException();
+            if (productDTO == null)
+                throw new ArgumentNullException(nameof(productDTO));
+
+            //insert            
+            await _productRepository.Insert(_mapper.Map<ProductDTO, Product>(productDTO));
+            return productDTO;
         }
 
-        public Task<ProductDTO> UpdateProduct(ProductDTO product)
+        public async Task<ProductDTO> UpdateProduct(ProductDTO productDTO)
         {
-            throw new NotImplementedException();
+            if (productDTO == null)
+                throw new ArgumentNullException(nameof(productDTO));
+
+            //update
+            await _productRepository.Update(_mapper.Map<ProductDTO, Product>(productDTO));
+            return productDTO;
         }
     }
 }
