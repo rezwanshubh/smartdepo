@@ -9,8 +9,4 @@
     <ProjectReference Include="..\SmartDepo.Entities\SmartDepo.Entities.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Catalog\" />
-  </ItemGroup>
-
 </Project>
